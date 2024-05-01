@@ -43,17 +43,13 @@ jobs:
         with:
           repository: mtararujs/python-greetings
           path: python-greetings
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14'
-      - name: Install PM2
-        run: npm install -g pm2
-      - name: Deploy to Dev
+      - name: Stop existing service
+        working-directory: python-greetings
         run: |
-          echo "Deploying to Dev..."
           pm2 delete greetings-app-dev & set "errorlevel=0"
-          cd python-greetings
+      - name: Start new service
+        working-directory: python-greetings
+        run: |
           pm2 start app.py --name greetings-app-dev -- --port 7001
 
   tests-on-dev:
