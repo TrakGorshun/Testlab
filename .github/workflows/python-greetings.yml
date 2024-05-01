@@ -75,8 +75,7 @@ jobs:
       - name: Run tests on Dev
         run: |
           echo "Running tests on Dev..."
-          ls -l
-          npm run greetings greetings_dev
+          npm run greetings greetings_dev -- --port 7001
         working-directory: course-js-api-framework
 
   deploy-to-staging:
