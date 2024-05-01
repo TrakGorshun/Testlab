@@ -30,7 +30,6 @@ jobs:
           echo "Installing all required dependencies..."
           cd python-greetings
           pip install -r requirements.txt
-          
 
   deploy-to-dev:
     needs: install-pip-deps
