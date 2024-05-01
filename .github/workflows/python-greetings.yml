@@ -77,6 +77,7 @@ jobs:
       - name: Run tests on Dev
         run: |
           echo "Running tests on Dev..."
+          ls -l
           npm run greetings greetings_dev
         working-directory: course-js-api-framework
 
