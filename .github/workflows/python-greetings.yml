@@ -55,12 +55,11 @@ jobs:
         working-directory: python-greetings
       - name: Start dev environment
         run: |
-          ls -l
           pm2 start app.py --name greetings-app-dev -- --port 7001
         working-directory: python-greetings
 
   tests-on-dev:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: deploy-to-dev
     steps:
       - name: Checkout code
