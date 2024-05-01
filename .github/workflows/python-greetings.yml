@@ -25,12 +25,6 @@ jobs:
         with:
           repository: mtararujs/python-greetings
           path: python-greetings
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14'
-      - name: Install PM2
-        run: npm install -g pm2
       - name: Install pip dependencies
         run: |
           echo "Installing all required dependencies..."
@@ -49,6 +43,12 @@ jobs:
         with:
           repository: mtararujs/python-greetings
           path: python-greetings
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - name: Install PM2
+        run: npm install -g pm2
       - name: Deploy to Dev
         run: |
           echo "Deploying to Dev..."
