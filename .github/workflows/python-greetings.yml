@@ -44,6 +44,7 @@ jobs:
           path: python-greetings
       - name: Install pm2
         run: npm install -g pm2
+        working-directory: python-greetings
       - name: Stop existing dev environment
         run: |
           cd python-greetings
@@ -51,6 +52,7 @@ jobs:
         working-directory: python-greetings
       - name: Check PATH
         run: echo $PATH
+        working-directory: python-greetings
       - name: Start dev environment
         run: |
           cd python-greetings
