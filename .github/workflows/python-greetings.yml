@@ -15,38 +15,85 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-	install-pip-deps:
-		runs-on: ubuntu-latest
-		steps:
-			- uses: actions/checkout@v3.5.2
-	 
-			# - name: Install pip
-				run: echo pip install -r requirements.txt
-	deploy-to-dev:
-		 runs-on: ubuntu-latest
-		 steps:
-         
-	tests-on-dev:
-	deploy-to-staging:
-	tests-on-staging:
-	deploy-to-preprod:
-	tests-on-preprod:
-	deploy-to-prod:
-	Tests-on-prod:
-	Build:
-    # The type of runner that the job will run on
+  install-pip-deps:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3.5.2
+      - name: Install pip dependencies
+        run: |
+          echo "Installing all required dependencies..."
 
-      # Runs a single command using the runners shell
+  deploy-to-dev:
+    needs: install-pip-deps
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Dev
+        run: |
+          echo "Deploying to Dev..."
+
+  tests-on-dev:
+    runs-on: ubuntu-latest
+    needs: deploy-to-dev
+    steps:
+      - name: Run tests on Dev
+        run: |
+          echo "Running tests on Dev..."
+
+  deploy-to-staging:
+    runs-on: ubuntu-latest
+    needs: tests-on-dev
+    steps:
+      - name: Deploy to Staging
+        run: |
+          echo "Deploying to Staging..."
+
+  tests-on-staging:
+    runs-on: ubuntu-latest
+    needs: deploy-to-staging
+    steps:
+      - name: Run tests on Staging
+        run: |
+          echo "Running tests on Staging..."
+
+  deploy-to-preprod:
+    runs-on: ubuntu-latest
+    needs: tests-on-staging
+    steps:
+      - name: Deploy to Preprod
+        run: |
+          echo "Deploying to Preprod..."
+
+  tests-on-preprod:
+    runs-on: ubuntu-latest
+    needs: deploy-to-preprod
+    steps:
+      - name: Run tests on Preprod
+        run: |
+          echo "Running tests on Preprod..."
+
+  deploy-to-prod:
+    runs-on: ubuntu-latest
+    needs: tests-on-preprod
+    steps:
+      - name: Deploy to Prod
+        run: |
+          echo "Deploying to Prod..."
+
+  tests-on-prod:
+    runs-on: ubuntu-latest
+    needs: deploy-to-prod
+    steps:
+      - name: Run tests on Prod
+        run: |
+          echo "Running tests on Prod..."
+
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Run a one-line script
         run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
