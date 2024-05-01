@@ -20,33 +20,71 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3.5.2
+      - name: Clone python-greetings repository
+        uses: actions/checkout@v3.5.2
+        with:
+          repository: mtararujs/python-greetings
+          path: python-greetings
       - name: Install pip dependencies
         run: |
           echo "Installing all required dependencies..."
+          cd python-greetings
+          pip install -r requirements.txt
 
   deploy-to-dev:
     needs: install-pip-deps
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3.5.2
+      - name: Clone python-greetings repository
+        uses: actions/checkout@v3.5.2
+        with:
+          repository: mtararujs/python-greetings
+          path: python-greetings
       - name: Deploy to Dev
         run: |
           echo "Deploying to Dev..."
+          pm2 delete greetings-app-dev & set "errorlevel=0"
+          pm2 start app.py --name greetings-app-dev -- --port 7001
 
   tests-on-dev:
     runs-on: ubuntu-latest
     needs: deploy-to-dev
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3.5.2
+      - name: Clone course-js-api-framework repository
+        uses: actions/checkout@v3.5.2
+        with:
+          repository: mtararujs/course-js-api-framework
+          path: course-js-api-framework
+      - name: Install npm dependencies
+        run: |
+          cd course-js-api-framework
+          npm install
+          echo "Installed npm dependencies."
       - name: Run tests on Dev
         run: |
           echo "Running tests on Dev..."
+          npm run greetings greetings_dev
 
   deploy-to-staging:
     runs-on: ubuntu-latest
     needs: tests-on-dev
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3.5.2
+      - name: Clone python-greetings repository
+        uses: actions/checkout@v3.5.2
+        with:
+          repository: mtararujs/python-greetings
+          path: python-greetings
       - name: Deploy to Staging
         run: |
-          echo "Deploying to Staging..."
+           echo "Deploying to Staging..."
+           pm2 delete greetings-app-staging & set "errorlevel=0"
+           pm2 start app.py --name greetings-app-staging -- --port 7002
 
   tests-on-staging:
     runs-on: ubuntu-latest
@@ -60,9 +98,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: tests-on-staging
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3.5.2
+      - name: Clone python-greetings repository
+        uses: actions/checkout@v3.5.2
+        with:
+          repository: mtararujs/python-greetings
+          path: python-greetings
       - name: Deploy to Preprod
         run: |
           echo "Deploying to Preprod..."
+          pm2 delete greetings-app-preprod & set "errorlevel=0"
+          pm2 start app.py --name greetings-app-preprod -- --port 7003
 
   tests-on-preprod:
     runs-on: ubuntu-latest
@@ -76,9 +123,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: tests-on-preprod
     steps:
-      - name: Deploy to Prod
-        run: |
-          echo "Deploying to Prod..."
+       - name: Checkout code
+         uses: actions/checkout@v3.5.2
+       - name: Clone python-greetings repository
+         uses: actions/checkout@v3.5.2
+         with:
+            repository: mtararujs/python-greetings
+            path: python-greetings
+       - name: Deploy to Prod
+         run: |
+            echo "Deploying to Prod..."
+            pm2 delete greetings-app-preprod & set "errorlevel=0"
+            pm2 start app.py --name greetings-app-prod -- --port 7004
 
   tests-on-prod:
     runs-on: ubuntu-latest
@@ -87,14 +143,3 @@ jobs:
       - name: Run tests on Prod
         run: |
           echo "Running tests on Prod..."
-
-  Build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run a one-line script
-        run: echo Hello, world!
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
