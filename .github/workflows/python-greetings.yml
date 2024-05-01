@@ -71,8 +71,8 @@ jobs:
           repository: mtararujs/course-js-api-framework
           path: course-js-api-framework
       - name: Install npm dependencies
+        working-directory: course-js-api-framework
         run: |
-          cd course-js-api-framework
           npm install
           echo "Installed npm dependencies."
       - name: Run tests on Dev
