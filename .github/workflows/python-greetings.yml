@@ -47,7 +47,7 @@ jobs:
         working-directory: python-greetings
       - name: Stop existing dev environment
         run: |
-          cd python-greetings
+          ls -l
           pm2 delete greetings-app-dev & set "errorlevel=0"
         working-directory: python-greetings
       - name: Check PATH
@@ -55,7 +55,7 @@ jobs:
         working-directory: python-greetings
       - name: Start dev environment
         run: |
-          cd python-greetings
+          ls -l
           pm2 start app.py --name greetings-app-dev -- --port 7001
         working-directory: python-greetings
 
