@@ -54,18 +54,8 @@ jobs:
       - name: Start dev environment
         working-directory: python-greetings
         run: |
-          ls -l
           pm2 start app.py --name greetings-app-dev -- --port 7001
           cd ..
-
-  tests-on-dev:
-    runs-on: ubuntu-latest
-    needs: [deploy-to-dev]
-    steps:
-      - name: Check port listening
-        run: sudo netstat -tuln
-      - name: Checkout code
-        uses: actions/checkout@v3.5.2
       - name: Clone course-js-api-framework repository
         uses: actions/checkout@v3.5.2
         with:
@@ -81,78 +71,102 @@ jobs:
         run: |
           echo "Running tests on Dev..."
           npm run greetings greetings_dev
+          
+  # tests-on-dev:
+  #   runs-on: ubuntu-latest
+  #   needs: [deploy-to-dev]
+  #   steps:
+  #     - name: Check port listening
+  #       run: sudo netstat -tuln
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3.5.2
+  #     - name: Clone course-js-api-framework repository
+  #       uses: actions/checkout@v3.5.2
+  #       with:
+  #         repository: mtararujs/course-js-api-framework
+  #         path: python-greetings
+  #     - name: Install npm dependencies
+  #       working-directory: python-greetings
+  #       run: |
+  #         npm install
+  #         echo "Installed npm dependencies."
+  #     - name: Run tests on Dev
+  #       working-directory: python-greetings
+  #       run: |
+  #         echo "Running tests on Dev..."
+  #         npm run greetings greetings_dev
 
-  deploy-to-staging:
-    runs-on: self-hosted
-    needs: [tests-on-dev]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3.5.2
-      - name: Clone python-greetings repository
-        uses: actions/checkout@v3.5.2
-        with:
-          repository: mtararujs/python-greetings
-          path: python-greetings
-      - name: Deploy to Staging
-        run: |
-           echo "Deploying to Staging..."
-           pm2 delete greetings-app-staging & set "errorlevel=0"
-           pm2 start app.py --name greetings-app-staging -- --port 7002
+  # deploy-to-staging:
+  #   runs-on: self-hosted
+  #   needs: [tests-on-dev]
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3.5.2
+  #     - name: Clone python-greetings repository
+  #       uses: actions/checkout@v3.5.2
+  #       with:
+  #         repository: mtararujs/python-greetings
+  #         path: python-greetings
+  #     - name: Deploy to Staging
+  #       run: |
+  #          echo "Deploying to Staging..."
+  #          pm2 delete greetings-app-staging & set "errorlevel=0"
+  #          pm2 start app.py --name greetings-app-staging -- --port 7002
 
-  tests-on-staging:
-    runs-on: windows-latest
-    needs: deploy-to-staging
-    steps:
-      - name: Run tests on Staging
-        run: |
-          echo "Running tests on Staging..."
+  # tests-on-staging:
+  #   runs-on: windows-latest
+  #   needs: deploy-to-staging
+  #   steps:
+  #     - name: Run tests on Staging
+  #       run: |
+  #         echo "Running tests on Staging..."
 
-  deploy-to-preprod:
-    runs-on: windows-latest
-    needs: tests-on-staging
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3.5.2
-      - name: Clone python-greetings repository
-        uses: actions/checkout@v3.5.2
-        with:
-          repository: mtararujs/python-greetings
-          path: python-greetings
-      - name: Deploy to Preprod
-        run: |
-          echo "Deploying to Preprod..."
-          pm2 delete greetings-app-preprod & set "errorlevel=0"
-          pm2 start app.py --name greetings-app-preprod -- --port 7003
+  # deploy-to-preprod:
+  #   runs-on: windows-latest
+  #   needs: tests-on-staging
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3.5.2
+  #     - name: Clone python-greetings repository
+  #       uses: actions/checkout@v3.5.2
+  #       with:
+  #         repository: mtararujs/python-greetings
+  #         path: python-greetings
+  #     - name: Deploy to Preprod
+  #       run: |
+  #         echo "Deploying to Preprod..."
+  #         pm2 delete greetings-app-preprod & set "errorlevel=0"
+  #         pm2 start app.py --name greetings-app-preprod -- --port 7003
 
-  tests-on-preprod:
-    runs-on: windows-latest
-    needs: deploy-to-preprod
-    steps:
-      - name: Run tests on Preprod
-        run: |
-          echo "Running tests on Preprod..."
+  # tests-on-preprod:
+  #   runs-on: windows-latest
+  #   needs: deploy-to-preprod
+  #   steps:
+  #     - name: Run tests on Preprod
+  #       run: |
+  #         echo "Running tests on Preprod..."
 
-  deploy-to-prod:
-    runs-on: windows-latest
-    needs: tests-on-preprod
-    steps:
-       - name: Checkout code
-         uses: actions/checkout@v3.5.2
-       - name: Clone python-greetings repository
-         uses: actions/checkout@v3.5.2
-         with:
-            repository: mtararujs/python-greetings
-            path: python-greetings
-       - name: Deploy to Prod
-         run: |
-            echo "Deploying to Prod..."
-            pm2 delete greetings-app-preprod & set "errorlevel=0"
-            pm2 start app.py --name greetings-app-prod -- --port 7004
+  # deploy-to-prod:
+  #   runs-on: windows-latest
+  #   needs: tests-on-preprod
+  #   steps:
+  #      - name: Checkout code
+  #        uses: actions/checkout@v3.5.2
+  #      - name: Clone python-greetings repository
+  #        uses: actions/checkout@v3.5.2
+  #        with:
+  #           repository: mtararujs/python-greetings
+  #           path: python-greetings
+  #      - name: Deploy to Prod
+  #        run: |
+  #           echo "Deploying to Prod..."
+  #           pm2 delete greetings-app-preprod & set "errorlevel=0"
+  #           pm2 start app.py --name greetings-app-prod -- --port 7004
 
-  tests-on-prod:
-    runs-on: windows-latest
-    needs: deploy-to-prod
-    steps:
-      - name: Run tests on Prod
-        run: |
-          echo "Running tests on Prod..."
+  # tests-on-prod:
+  #   runs-on: windows-latest
+  #   needs: deploy-to-prod
+  #   steps:
+  #     - name: Run tests on Prod
+  #       run: |
+  #         echo "Running tests on Prod..."
