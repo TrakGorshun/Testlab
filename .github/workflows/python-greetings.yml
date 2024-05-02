@@ -44,7 +44,9 @@ jobs:
           repository: mtararujs/python-greetings
           path: python-greetings
       - name: Install pm2
-        run: npm install -g pm2
+        run: |
+          cd python-greetings
+          npm install -g pm2
         working-directory: python-greetings
       - name: Stop existing dev environment
         run: |
