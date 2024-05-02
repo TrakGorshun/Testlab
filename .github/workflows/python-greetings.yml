@@ -69,12 +69,13 @@ jobs:
           repository: mtararujs/course-js-api-framework
           path: course-js-api-framework
       - name: Install npm dependencies
+        working-directory: course-js-api-framework
         run: |
           cd course-js-api-framework
           npm install
           echo "Installed npm dependencies."
-        working-directory: course-js-api-framework
       - name: Run tests on Dev
+        working-directory: course-js-api-framework
         run: |
           echo "Running tests on Dev..."
           npm run greetings greetings_dev -- --port 7001
