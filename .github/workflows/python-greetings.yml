@@ -79,7 +79,7 @@ jobs:
         working-directory: course-js-api-framework
 
   deploy-to-staging:
-    runs-on: windows-latest
+    runs-on: self-hosted
     needs: tests-on-dev
     steps:
       - name: Checkout code
