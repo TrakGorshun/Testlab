@@ -69,9 +69,7 @@ jobs:
           path: course-js-api-framework
       - name: Install npm dependencies
         run: |
-          ls -a
           npm install
-          ls -a
           echo "Installed npm dependencies."
         working-directory: course-js-api-framework
       - name: Run tests on Dev
