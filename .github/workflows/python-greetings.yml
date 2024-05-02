@@ -47,8 +47,7 @@ jobs:
         working-directory: python-greetings
       - name: Stop existing dev environment
         run: |
-          pm2 delete greetings-app-dev
-          set "errorlevel=0"
+          pm2 delete greetings-app-dev -q
         working-directory: python-greetings
       - name: Start dev environment
         run: |
