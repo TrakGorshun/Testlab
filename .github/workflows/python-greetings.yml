@@ -46,8 +46,8 @@ jobs:
       - name: Install pm2
         run: |
           npm install -g pm2
-        working-directory: python-greetings
       - name: Stop existing dev environment
+        working-directory: python-greetings
         run: |
           pm2 delete greetings-app-dev & set "errorlevel=0"
       - name: Start dev environment
@@ -71,7 +71,6 @@ jobs:
       - name: Install npm dependencies
         working-directory: course-js-api-framework
         run: |
-          cd course-js-api-framework
           npm install
           echo "Installed npm dependencies."
       - name: Run tests on Dev
