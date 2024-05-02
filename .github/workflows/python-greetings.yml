@@ -30,6 +30,7 @@ jobs:
           echo "Installing all required dependencies..."
           cd python-greetings
           pip install -r requirements.txt
+          cd ..
 
   deploy-to-dev:
     runs-on: self-hosted
@@ -45,10 +46,14 @@ jobs:
       - name: Install pm2
         run: npm install -g pm2
         working-directory: python-greetings
+      - name: Stop existing dev environment
+        run: |
+          pm2 delete greetings-app-dev & set "errorlevel=0"
+        working-directory: python-greetings
       - name: Start dev environment
         run: |
           pm2 start app.py --name greetings-app-dev -- --port 7001
-        working-directory: python-greetings
+          cd ..
 
   tests-on-dev:
     runs-on: self-hosted
@@ -63,18 +68,11 @@ jobs:
           path: course-js-api-framework
       - name: Install npm dependencies
         run: |
+          cd course-js-api-framework
           npm install
           echo "Installed npm dependencies."
         working-directory: course-js-api-framework
-      - name: Check if greetings-app-dev is running
-        working-directory: python-greetings
-        run: |
-          if ! pm2 describe greetings-app-dev &>/dev/null; then
-            echo "Error: greetings-app-dev is not running."
-            exit 1
-          fi
       - name: Run tests on Dev
-        working-directory: course-js-api-framework
         run: |
           echo "Running tests on Dev..."
           npm run greetings greetings_dev -- --port 7001
