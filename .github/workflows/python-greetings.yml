@@ -16,29 +16,27 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   install-pip-deps:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3.5.2
-      # - name: Remove existing python-greetings directory
-      #   run: Remove-Item -Path python-greetings -Recurse -Force
       - name: Clone python-greetings repository
         uses: actions/checkout@v3.5.2
         with:
           repository: mtararujs/python-greetings
-          path: ./python-greeting
+          path: ./python-greetings
       - name: Install pip dependencies
-        working-directory: ./python-greeting
+        working-directory: ./python-greetings
         run: |
           echo "Installing all required dependencies..."
           pip install -r requirements.txt
 
   deploy-to-dev:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: [install-pip-deps]
     steps:
-      # - name: Checkout repository
-      #   uses: actions/checkout@v3.5.2
+      - name: Checkout repository
+        uses: actions/checkout@v3.5.2
       - name: Clone python-greetings repository
         uses: actions/checkout@v3.5.2
         with:
@@ -48,24 +46,21 @@ jobs:
         working-directory: ./python-greetings
         run: |
           npm install -g pm2
-      # - name: Stop existing dev environment
-      #   working-directory: ./python-greetings
-      #   run: |
-      #     pm2 delete greetings-app-dev
+      - name: Stop existing dev environment
+        working-directory: ./python-greetings
+        run: |
+          pm2 delete greetings-app-dev & set "errorlevel=0" 
       - name: Start dev environment
         working-directory: ./python-greetings
         run: |
-          pm2 start app.py --name greetings-app-dev -- -- port 7001
-      # - name: Check server status
-      #   run: |
-      #     curl -I http://localhost:7001
+          pm2 start app.py --name greetings-app-dev -- --port 7001
 
   tests-on-dev:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: [deploy-to-dev]
     steps:
-      # - name: Checkout repository
-      #   uses: actions/checkout@v3.5.2
+      - name: Checkout repository
+        uses: actions/checkout@v3.5.2
       - name: Clone course-js-api-framework repository
         uses: actions/checkout@v3.5.2
         with:
@@ -83,101 +78,140 @@ jobs:
           echo "Running tests on Dev..."
           npm run greetings greetings_dev
           
-  # tests-on-dev:
-  #   runs-on: ubuntu-latest
-  #   needs: [deploy-to-dev]
-  #   steps:
-  #     - name: Check port listening
-  #       run: sudo netstat -tuln
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3.5.2
-  #     - name: Clone course-js-api-framework repository
-  #       uses: actions/checkout@v3.5.2
-  #       with:
-  #         repository: mtararujs/course-js-api-framework
-  #         path: python-greetings
-  #     - name: Install npm dependencies
-  #       working-directory: python-greetings
-  #       run: |
-  #         npm install
-  #         echo "Installed npm dependencies."
-  #     - name: Run tests on Dev
-  #       working-directory: python-greetings
-  #       run: |
-  #         echo "Running tests on Dev..."
-  #         npm run greetings greetings_dev
+  deploy-to-staging:
+    runs-on: ubuntu-latest
+    needs: [tests-on-dev]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3.5.2
+      - name: Clone python-greetings repository
+        uses: actions/checkout@v3.5.2
+        with:
+          repository: mtararujs/python-greetings
+          path: ./python-greetings
+      - name: Install pm2
+        working-directory: ./python-greetings
+        run: |
+          npm install -g pm2
+      - name: Stop existing dev environment
+        working-directory: ./python-greetings
+        run: |
+          pm2 delete greetings-app-staging & set "errorlevel=0" 
+      - name: Deploy to Staging
+        run: |
+           echo "Deploying to Staging..."
+           pm2 start app.py --name greetings-app-staging -- --port 7002
 
-  # deploy-to-staging:
-  #   runs-on: self-hosted
-  #   needs: [tests-on-dev]
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3.5.2
-  #     - name: Clone python-greetings repository
-  #       uses: actions/checkout@v3.5.2
-  #       with:
-  #         repository: mtararujs/python-greetings
-  #         path: python-greetings
-  #     - name: Deploy to Staging
-  #       run: |
-  #          echo "Deploying to Staging..."
-  #          pm2 delete greetings-app-staging & set "errorlevel=0"
-  #          pm2 start app.py --name greetings-app-staging -- --port 7002
+  tests-on-staging:
+    runs-on: ubuntu-latest
+    needs: deploy-to-staging
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.5.2
+      - name: Clone course-js-api-framework repository
+        uses: actions/checkout@v3.5.2
+        with:
+          repository: mtararujs/course-js-api-framework
+          path: ./course-js-api-framework
+      - name: Install npm dependencies
+        working-directory: ./course-js-api-framework
+        run: |
+          npm install
+          npm audit fix --force
+          echo "Installed npm dependencies."
+      - name: Run tests on Staging
+        run: |
+          echo "Running tests on Staging..."
+          npm run greetings greetings_staging
 
-  # tests-on-staging:
-  #   runs-on: windows-latest
-  #   needs: deploy-to-staging
-  #   steps:
-  #     - name: Run tests on Staging
-  #       run: |
-  #         echo "Running tests on Staging..."
+  deploy-to-preprod:
+    runs-on: ubuntu-latest
+    needs: tests-on-staging
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3.5.2
+      - name: Clone python-greetings repository
+        uses: actions/checkout@v3.5.2
+        with:
+          repository: mtararujs/python-greetings
+          path: python-greetings
+      - name: Install pm2
+        working-directory: ./python-greetings
+        run: |
+          npm install -g pm2
+      - name: Stop existing dev environment
+        working-directory: ./python-greetings
+        run: |
+          pm2 delete greetings-app-staging & set "errorlevel=0" 
+      - name: Deploy to Preprod
+        run: |
+          echo "Deploying to Preprod..."
+          pm2 start app.py --name greetings-app-preprod -- --port 7003
 
-  # deploy-to-preprod:
-  #   runs-on: windows-latest
-  #   needs: tests-on-staging
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3.5.2
-  #     - name: Clone python-greetings repository
-  #       uses: actions/checkout@v3.5.2
-  #       with:
-  #         repository: mtararujs/python-greetings
-  #         path: python-greetings
-  #     - name: Deploy to Preprod
-  #       run: |
-  #         echo "Deploying to Preprod..."
-  #         pm2 delete greetings-app-preprod & set "errorlevel=0"
-  #         pm2 start app.py --name greetings-app-preprod -- --port 7003
+  tests-on-preprod:
+    runs-on: windows-latest
+    needs: deploy-to-preprod
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.5.2
+      - name: Clone course-js-api-framework repository
+        uses: actions/checkout@v3.5.2
+        with:
+          repository: mtararujs/course-js-api-framework
+          path: ./course-js-api-framework
+      - name: Install npm dependencies
+        working-directory: ./course-js-api-framework
+        run: |
+          npm install
+          npm audit fix --force
+          echo "Installed npm dependencies."
+      - name: Run tests on Preprod
+        run: |
+          echo "Running tests on Preprod..."
+          npm run greetings greetings_preprod
 
-  # tests-on-preprod:
-  #   runs-on: windows-latest
-  #   needs: deploy-to-preprod
-  #   steps:
-  #     - name: Run tests on Preprod
-  #       run: |
-  #         echo "Running tests on Preprod..."
+  deploy-to-prod:
+    runs-on: ubuntu-latest
+    needs: [tests-on-preprod]
+    steps:
+       - name: Checkout code
+         uses: actions/checkout@v3.5.2
+       - name: Clone python-greetings repository
+         uses: actions/checkout@v3.5.2
+         with:
+            repository: mtararujs/python-greetings
+            path: python-greetings
+       - name: Install pm2
+         working-directory: ./python-greetings
+         run: |
+            npm install -g pm2
+       - name: Stop existing dev environment
+         working-directory: ./python-greetings
+         run: |
+          pm2 delete greetings-app-prod & set "errorlevel=0" 
+       - name: Deploy to Prod
+         run: |
+            echo "Deploying to Prod..."
+            pm2 start app.py --name greetings-app-prod -- --port 7004
 
-  # deploy-to-prod:
-  #   runs-on: windows-latest
-  #   needs: tests-on-preprod
-  #   steps:
-  #      - name: Checkout code
-  #        uses: actions/checkout@v3.5.2
-  #      - name: Clone python-greetings repository
-  #        uses: actions/checkout@v3.5.2
-  #        with:
-  #           repository: mtararujs/python-greetings
-  #           path: python-greetings
-  #      - name: Deploy to Prod
-  #        run: |
-  #           echo "Deploying to Prod..."
-  #           pm2 delete greetings-app-preprod & set "errorlevel=0"
-  #           pm2 start app.py --name greetings-app-prod -- --port 7004
-
-  # tests-on-prod:
-  #   runs-on: windows-latest
-  #   needs: deploy-to-prod
-  #     - name: Run tests on Prod
-  #   steps:
-  #       run: |
-  #         echo "Running tests on Prod..."
+  tests-on-prod:
+    runs-on: ubuntu-latest
+    needs: [deploy-to-prod]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.5.2
+      - name: Clone course-js-api-framework repository
+        uses: actions/checkout@v3.5.2
+        with:
+          repository: mtararujs/course-js-api-framework
+          path: ./course-js-api-framework
+      - name: Install npm dependencies
+        working-directory: ./course-js-api-framework
+        run: |
+          npm install
+          npm audit fix --force
+          echo "Installed npm dependencies."
+      - name: Run tests on prod
+        run: |
+          echo "Running tests on Prod..."
+          npm run greetings greetings_prod
