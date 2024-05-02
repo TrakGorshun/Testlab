@@ -58,7 +58,6 @@ jobs:
         working-directory: python-greetings
         run: |
           pm2 start app.py --name greetings-app-dev -- --port 7001
-          cd ..
       - name: Check server status
         run: |
           curl -I http://localhost:7001
