@@ -77,7 +77,7 @@ jobs:
         working-directory: course-js-api-framework
         run: |
           echo "Running tests on Dev..."
-          npm run greetings greetings_dev -- --port 7001
+          npm run greetings greetings_dev
 
   deploy-to-staging:
     runs-on: self-hosted
