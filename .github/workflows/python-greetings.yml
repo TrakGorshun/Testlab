@@ -54,12 +54,12 @@ jobs:
       - name: Start dev environment
         working-directory: python-greetings
         run: |
-          pm2 start app.py --name greetings-app-dev -- --port=7001
+          pm2 start app.py --name greetings-app-dev -- --port 7001
           cd ..
-      - name: Wait before running tests
-        run: sleep 30
       - name: Check server status
         run: curl -I http://localhost:7001
+
+        
       - name: Clone course-js-api-framework repository
         uses: actions/checkout@v3.5.2
         with:
