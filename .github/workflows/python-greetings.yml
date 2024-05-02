@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   install-pip-deps:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v3.5.2
@@ -30,13 +30,13 @@ jobs:
         run: |
           echo "Installing all required dependencies..."
           pip install -r requirements.txt
-      - name: Install Node.js
-        run: |
-          curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-          sudo apt-get install -y nodejs
+      # - name: Install Node.js
+      #   run: |
+      #     curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+      #     sudo apt-get install -y nodejs
 
   deploy-to-dev:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [install-pip-deps]
     steps:
       - name: Checkout repository
@@ -57,7 +57,7 @@ jobs:
       - name: Start dev environment
         working-directory: python-greetings
         run: |
-          pm2 start app.py --name greetings-app-dev -- --port 7001
+          pm2 start app.py --name greetings-app-dev -- -- port 7001
       - name: Check server status
         run: |
           curl -I http://localhost:7001
