@@ -75,7 +75,7 @@ jobs:
       - name: Run tests on Dev
         run: |
           echo "Running tests on Dev..."
-          npm run greetings greetings_dev -- --port 7001
+          npm run greetings greetings_dev
         working-directory: python-greetings
 
   deploy-to-staging:
