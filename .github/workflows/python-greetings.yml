@@ -20,10 +20,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3.5.2
-      - name: Clone python-greetings repository
-        uses: actions/checkout@v3.5.2
       - name: Remove existing python-greetings directory
         run: Remove-Item -Path python-greetings -Recurse -Force
+      - name: Clone python-greetings repository
+        uses: actions/checkout@v3.5.2
         with:
           repository: mtararujs/python-greetings
           path: python-greetings
