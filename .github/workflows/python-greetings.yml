@@ -71,16 +71,17 @@ jobs:
           echo "Installed npm dependencies."
         working-directory: course-js-api-framework
       - name: Check if greetings-app-dev is running
+        working-directory: python-greetings
         run: |
           if ! pm2 describe greetings-app-dev &>/dev/null; then
             echo "Error: greetings-app-dev is not running."
             exit 1
           fi
       - name: Run tests on Dev
+        working-directory: course-js-api-framework
         run: |
           echo "Running tests on Dev..."
           npm run greetings greetings_dev -- --port 7001
-        working-directory: course-js-api-framework
 
   deploy-to-staging:
     runs-on: self-hosted
