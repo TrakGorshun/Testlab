@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   install-pip-deps:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v3.5.2
@@ -33,7 +33,7 @@ jobs:
           cd ..
 
   deploy-to-dev:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [install-pip-deps]
     steps:
       - name: Checkout repository
@@ -46,11 +46,11 @@ jobs:
       - name: Install pm2
         working-directory: python-greetings
         run: |
-          npm install -g pm2
-      - name: Stop existing dev environment
-        working-directory: python-greetings
-        run: |
-          pm2 delete greetings-app-dev & set "errorlevel=0"
+      #     npm install -g pm2
+      # - name: Stop existing dev environment
+      #   working-directory: python-greetings
+      #   run: |
+      #     pm2 delete greetings-app-dev & set "errorlevel=0"
       - name: Start dev environment
         working-directory: python-greetings
         run: |
