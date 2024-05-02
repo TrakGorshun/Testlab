@@ -71,6 +71,7 @@ jobs:
         with:
           repository: mtararujs/course-js-api-framework
           path: ./course-js-api-framework
+          fetch-depth: 0
       - name: Install npm dependencies
         working-directory: ./course-js-api-framework
         run: |
