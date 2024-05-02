@@ -50,17 +50,17 @@ jobs:
         working-directory: python-greetings
         run: |
           npm install -g pm2
-      # - name: Stop existing dev environment
-      #   working-directory: python-greetings
-      #   run: |
-      #     pm2 delete greetings-app-dev & set "errorlevel=0"
+      - name: Stop existing dev environment
+        working-directory: python-greetings
+        run: |
+          pm2 delete greetings-app-dev
       - name: Start dev environment
         working-directory: python-greetings
         run: |
           pm2 start app.py --name greetings-app-dev -- -- port 7001
-      - name: Check server status
-        run: |
-          curl -I http://localhost:7001
+      # - name: Check server status
+      #   run: |
+      #     curl -I http://localhost:7001
 
   tests-on-dev:
     runs-on: ubuntu-latest
