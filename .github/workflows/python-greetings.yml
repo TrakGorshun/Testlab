@@ -26,11 +26,10 @@ jobs:
           repository: mtararujs/python-greetings
           path: python-greetings
       - name: Install pip dependencies
+        working-directory: python-greetings
         run: |
           echo "Installing all required dependencies..."
-          cd python-greetings
           pip install -r requirements.txt
-          cd ..
 
   deploy-to-dev:
     runs-on: self-hosted
@@ -46,20 +45,23 @@ jobs:
       - name: Install pm2
         working-directory: python-greetings
         run: |
-      #     npm install -g pm2
+          npm install -g pm2
       # - name: Stop existing dev environment
+      # pm2 delete greetings-app-dev & set "errorlevel=0"
       #   working-directory: python-greetings
-      #   run: |
-      #     pm2 delete greetings-app-dev & set "errorlevel=0"
       - name: Start dev environment
         working-directory: python-greetings
         run: |
           pm2 start app.py --name greetings-app-dev -- --port 7001
           cd ..
       - name: Check server status
-        run: curl -I http://localhost:7001
+        run: |
+          curl -I http://localhost:7001
 
-        
+  tests-on-dev:
+    runs-on: ubuntu-latest
+    needs: [deploy-to-dev]
+    steps:
       - name: Clone course-js-api-framework repository
         uses: actions/checkout@v3.5.2
         with:
@@ -170,7 +172,7 @@ jobs:
   # tests-on-prod:
   #   runs-on: windows-latest
   #   needs: deploy-to-prod
-  #   steps:
   #     - name: Run tests on Prod
+  #   steps:
   #       run: |
   #         echo "Running tests on Prod..."
