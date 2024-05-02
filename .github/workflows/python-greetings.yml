@@ -54,6 +54,7 @@ jobs:
       - name: Start dev environment
         run: |
           ls -l
+          cd python-greetings
           pm2 start app.py --name greetings-app-dev -- --port 7001
           cd ..
 
