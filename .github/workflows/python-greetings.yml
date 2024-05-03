@@ -49,19 +49,16 @@ jobs:
       - name: Install pm2
         working-directory: ./python-greetings
         run: npm install -g pm2
-        shell: bash
       
       - name: Stop existing dev environment
         working-directory: ./python-greetings
-        run: pm2 delete greetings-app-dev || true
-        shell: bash
+        run: pm2 delete greetings-app-dev; exit 0
       
       - name: Start dev environment
         working-directory: ./python-greetings
         run: |
           pm2 start app.py --name greetings-app-dev -- --port 7001
           nc -zv localhost 7001
-        shell: bash
 
   tests-on-dev:
     needs: [deploy-to-dev]
