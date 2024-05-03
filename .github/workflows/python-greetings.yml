@@ -57,7 +57,7 @@ jobs:
       - name: Start dev environment
         working-directory: ./python-greetings
         run: |
-          cmd /c "pm2 start app.py --name greetings-app-dev -- --port 7001"
+          cmd /c "pm2 start app.py --name greetings-app-dev --interpreter python3 -- --port 7001"
           $portOpen = Test-NetConnection -ComputerName localhost -Port 7001 | Select-Object -ExpandProperty TcpTestSucceeded
           if ($portOpen) {
             Write-Host "Port 7001 is open and accessible."
