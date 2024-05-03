@@ -50,6 +50,7 @@ jobs:
         working-directory: ./python-greetings
         run: |
           npm install -g pm2
+        shell: bash
       - name: Stop existing dev environment
         working-directory: ./python-greetings
         run: pm2 delete greetings-app-dev || true
