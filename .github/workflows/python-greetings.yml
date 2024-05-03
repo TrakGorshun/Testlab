@@ -36,8 +36,8 @@ jobs:
           pip install -r requirements.txt
 
   deploy-to-dev:
-    runs-on: ubuntu-latest
     needs: [install-pip-deps]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3.5.2
@@ -72,6 +72,7 @@ jobs:
         with:
           repository: mtararujs/course-js-api-framework
           path: ./course-js-api-framework
+          fetch-depth: 0
       - name: Install npm dependencies
         working-directory: ./course-js-api-framework
         run: |
