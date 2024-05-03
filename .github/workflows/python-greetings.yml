@@ -81,6 +81,13 @@ jobs:
       - name: Install npm dependencies
         working-directory: ./course-js-api-framework
         run: |
+          $portOpen = Test-NetConnection -ComputerName localhost -Port 7001 | Select-Object -ExpandProperty TcpTestSucceeded
+          if ($portOpen) {
+            Write-Host "Port 7001 is open and accessible."
+          } else {
+            Write-Host "Port 7001 is not accessible."
+            exit 1
+          }
           npm install
           echo "Installed npm dependencies."
       - name: Run tests on Dev
