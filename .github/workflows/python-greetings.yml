@@ -58,6 +58,13 @@ jobs:
         working-directory: ./python-greetings
         run: |
           cmd /c "pm2 start app.py --name greetings-app-dev -- --port 7001"
+          $portOpen = Test-NetConnection -ComputerName localhost -Port 7001 | Select-Object -ExpandProperty TcpTestSucceeded
+          if ($portOpen) {
+            Write-Host "Port 7001 is open and accessible."
+          } else {
+            Write-Host "Port 7001 is not accessible."
+            exit 1
+          }
 
   tests-on-dev:
     needs: [deploy-to-dev]
@@ -80,7 +87,7 @@ jobs:
         working-directory: ./course-js-api-framework
         run: |
           echo "Running tests on Dev..."
-          npm run greetings greetings_dev
+          cmd /c "npm run greetings greetings_dev"
           
   deploy-to-staging:
     runs-on: ubuntu-latest
