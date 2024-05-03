@@ -44,7 +44,7 @@ jobs:
         with:
           repository: mtararujs/python-greetings
           path: ./python-greetings
-          ref: 4e911440a9886c7c26ccbb4eb55f0bc2a5067b51
+          ref: '4e911440a9886c7c26ccbb4eb55f0bc2a5067b51'
           fetch-depth: 0
       - name: Install pm2
         working-directory: ./python-greetings
@@ -57,8 +57,8 @@ jobs:
       - name: Start dev environment
         working-directory: ./python-greetings
         run: |
-          $env:PORT = 7001
-          pm2 start app.py --name greetings-app-dev
+          pm2 start app.py --name greetings-app-dev -- --port 7001
+        shell: bash
 
   tests-on-dev:
     needs: [deploy-to-dev]
@@ -76,7 +76,6 @@ jobs:
         working-directory: ./course-js-api-framework
         run: |
           npm install
-          npm audit fix --force
           echo "Installed npm dependencies."
       - name: Run tests on Dev
         working-directory: ./course-js-api-framework
