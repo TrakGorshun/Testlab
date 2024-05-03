@@ -57,7 +57,8 @@ jobs:
       - name: Start dev environment
         working-directory: ./python-greetings
         run: |
-          pm2 start app.py --name greetings-app-dev -- --port 7001
+          $env:PORT = 7001
+          pm2 start app.py --name greetings-app-dev
           nc -zv localhost 7001
 
   tests-on-dev:
