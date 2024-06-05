@@ -32,7 +32,7 @@ jobs:
           pip install -r requirements.txt
 
   deploy-to-dev:
-    needs: [install-pip-deps]
+    # needs: [install-pip-deps]
     runs-on: self-hosted
     steps:
       # - name: Checkout repository
@@ -65,7 +65,7 @@ jobs:
           }
 
   tests-on-dev:
-    needs: [deploy-to-dev]
+    # needs: [deploy-to-dev]
     runs-on: self-hosted
     steps:
       # - name: Checkout repository
@@ -88,7 +88,7 @@ jobs:
           cmd /c "npm run greetings greetings_dev"
           
   deploy-to-staging:
-    needs: [tests-on-dev]
+    # needs: [tests-on-dev]
     runs-on: self-hosted
     steps:
       # - name: Checkout code
@@ -107,7 +107,7 @@ jobs:
           cmd /c "pm2 start app.py --name greetings-app-staging -- --port 7002"
 
   tests-on-staging:
-    needs: [deploy-to-staging]
+    # needs: [deploy-to-staging]
     runs-on: self-hosted
     steps:
       - name: Checkout repository
@@ -131,7 +131,7 @@ jobs:
 
   deploy-to-preprod:
     runs-on: self-hosted
-    needs: [tests-on-staging]
+    # needs: [tests-on-staging]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3.5.2
@@ -156,7 +156,7 @@ jobs:
           cmd /c "pm2 start app.py --name greetings-app-preprod -- --port 7003"
 
   tests-on-preprod:
-    needs: [deploy-to-preprod]
+    # needs: [deploy-to-preprod]
     runs-on: self-hosted
     steps:
       - name: Checkout repository
@@ -179,7 +179,7 @@ jobs:
           cmd /c "npm run greetings greetings_preprod"
 
   deploy-to-prod:
-    needs: [tests-on-preprod]
+    # needs: [tests-on-preprod]
     runs-on: self-hosted
     steps:
       - name: Checkout code
@@ -205,7 +205,7 @@ jobs:
           cmd /c "pm2 start app.py --name greetings-app-prod -- --port 7004"
 
   tests-on-prod:
-    needs: [deploy-to-prod]
+    # needs: [deploy-to-prod]
     runs-on: self-hosted
     steps:
       - name: Checkout repository
